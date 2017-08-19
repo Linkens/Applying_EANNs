@@ -172,7 +172,7 @@ public class TrackManager : MonoBehaviour
             RaceCar car = cars[i];
             if (car.Car.enabled)
             {
-                car.Car.CurrentCompletionReward = GetCompletePerc(car.Car, ref car.CheckpointIndex);
+                car.Car.CurrentCompletionReward = GetCompletePerc(car);
 
                 //Update best
                 if (BestCar == null || car.Car.CurrentCompletionReward >= BestCar.CurrentCompletionReward)
@@ -269,26 +269,27 @@ public class TrackManager : MonoBehaviour
 
     // Calculates the completion percentage of given car with given completed last checkpoint.
     // This method will update the given checkpoint index accordingly to the current position.
-    private float GetCompletePerc(CarController car, ref uint curCheckpointIndex)
+    private float GetCompletePerc(RaceCar Rcar)
     {
+        var car = Rcar.Car;
         //Already all checkpoints captured
-        if (curCheckpointIndex >= checkpoints.Length)
+        if (Rcar.CheckpointIndex >= checkpoints.Length)
             return 1;
 
         //Calculate distance to next checkpoint
-        float checkPointDistance = Vector2.Distance(car.transform.position, checkpoints[curCheckpointIndex].transform.position);
+        float checkPointDistance = Vector2.Distance(car.transform.position, checkpoints[Rcar.CheckpointIndex].transform.position);
 
         //Check if checkpoint can be captured
-        if (checkPointDistance <= checkpoints[curCheckpointIndex].CaptureRadius)
+        if (checkPointDistance <= checkpoints[Rcar.CheckpointIndex].CaptureRadius)
         {
-            curCheckpointIndex++;
+            Rcar.CheckpointIndex++;
             car.CheckpointCaptured(); //Inform car that it captured a checkpoint
-            return GetCompletePerc(car, ref curCheckpointIndex); //Recursively check next checkpoint
+            return GetCompletePerc(Rcar); //Recursively check next checkpoint
         }
         else
         {
             //Return accumulated reward of last checkpoint + reward of distance to next checkpoint
-            return checkpoints[curCheckpointIndex - 1].AccumulatedReward + checkpoints[curCheckpointIndex].GetRewardValue(checkPointDistance);
+            return checkpoints[Rcar.CheckpointIndex - 1].AccumulatedReward + checkpoints[Rcar.CheckpointIndex].GetRewardValue(checkPointDistance);
         }
     }
     #endregion

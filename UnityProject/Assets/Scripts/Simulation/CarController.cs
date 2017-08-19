@@ -2,6 +2,8 @@
 /// Date: March 2017
 
 #region Includes
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 #endregion
 
@@ -25,7 +27,7 @@ public class CarController : MonoBehaviour
     #endregion
 
     // Maximum delay in seconds between the collection of two checkpoints until this car dies.
-    private const float MAX_CHECKPOINT_DELAY = 7;
+    private const float MAX_CHECKPOINT_DELAY = 10;
 
     /// <summary>
     /// The underlying AI agent of this car.
@@ -123,11 +125,10 @@ public class CarController : MonoBehaviour
         if (!UseUserInput)
         {
             //Get readings from sensors
-            double[] sensorOutput = new double[sensors.Length];
-            for (int i = 0; i < sensors.Length; i++)
-                sensorOutput[i] = sensors[i].Output;
+            List<double> sensorOutput = new List<double>();
+            foreach (var s in sensors) sensorOutput.AddRange(s.GetValues);
 
-            double[] controlInputs = Agent.FNN.ProcessInputs(sensorOutput);
+            double[] controlInputs = Agent.FNN.ProcessInputs(sensorOutput.ToArray());
             Movement.SetInputs(controlInputs);
         }
 

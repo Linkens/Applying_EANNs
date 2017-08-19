@@ -123,7 +123,8 @@ public class EvolutionManager : MonoBehaviour
         //Statistics
         if (SaveStatistics)
         {
-            statisticsFileName = "Evaluation - " + GameStateManager.Instance.TrackName + " " + DateTime.Now.ToString("yyyy_MM_dd_HH-mm-ss");
+
+            statisticsFileName = Path.Combine( Application.dataPath, "Evaluation - " + GameStateManager.Instance.TrackName + " " + DateTime.Now.ToString("yyyy_MM_dd_HH-mm-ss"));
             WriteStatisticsFileStart();
             geneticAlgorithm.FitnessCalculationFinished += WriteStatisticsToFile;
         }

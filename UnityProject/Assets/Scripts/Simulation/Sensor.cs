@@ -21,7 +21,6 @@ public class Sensor : MonoBehaviour
     // Max and min readings
     private const float MAX_DIST = 10f;
     private const float MIN_DIST = 0.01f;
-
     /// <summary>
     /// The current sensor readings in percent of maximum distance.
     /// </summary>
@@ -30,13 +29,16 @@ public class Sensor : MonoBehaviour
         get;
         private set;
     }
+    public virtual double[] GetValues { get { return new double[] { Output }; } }
     #endregion
 
     #region Constructors
     void Start ()
     {
         Cross.gameObject.SetActive(true);
-	}
+        Init();
+    }
+    internal virtual void Init() { }
     #endregion
 
     #region Methods
@@ -56,9 +58,14 @@ public class Sensor : MonoBehaviour
         else if (hit.distance < MIN_DIST)
             hit.distance = MIN_DIST;
 
-        this.Output = hit.distance; //transform to percent of max distance
-        Cross.transform.position = (Vector2) this.transform.position + direction * hit.distance; //Set position of visual cross to current reading
-	}
+        SetInnerValues(direction, hit.distance);
+
+    }
+    internal  virtual void SetInnerValues(Vector2 direction ,float Distance)
+    {
+        Output = Distance; //transform to percent of max distance
+        Cross.transform.position = (Vector2)this.transform.position + direction * Output;//Set position of visual cross to current reading
+    }
 
     /// <summary>
     /// Hides the crosshair of this sensor.

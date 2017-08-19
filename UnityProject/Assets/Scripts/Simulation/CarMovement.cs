@@ -22,6 +22,7 @@ public class CarMovement : MonoBehaviour
     private const float ACCELERATION = 8f;
     private const float VEL_FRICT = 2f;
     private const float TURN_SPEED = 100;
+    private const float Delta_t = 0.02f;
 
     private CarController controller;
 
@@ -106,7 +107,8 @@ public class CarMovement : MonoBehaviour
         //Set velocity
         if (canAccelerate)
         {
-            Velocity += (float)verticalInput * ACCELERATION * Time.deltaTime;
+            //Velocity += (float)verticalInput * ACCELERATION * Time.deltaTime; remove randomness of deltatime
+            Velocity += (float)verticalInput * ACCELERATION * Delta_t;
 
             //Cap velocity
             if (Velocity > MAX_VEL)
@@ -117,7 +119,8 @@ public class CarMovement : MonoBehaviour
         
         //Set rotation
         Rotation = transform.rotation;
-        Rotation *= Quaternion.AngleAxis((float)-horizontalInput * TURN_SPEED * Time.deltaTime, new Vector3(0, 0, 1));
+        //Rotation *= Quaternion.AngleAxis((float)-horizontalInput * TURN_SPEED * Time.deltaTime, new Vector3(0, 0, 1));
+        Rotation *= Quaternion.AngleAxis((float)-horizontalInput * TURN_SPEED * Delta_t, new Vector3(0, 0, 1));
     }
 
     /// <summary>
@@ -137,7 +140,8 @@ public class CarMovement : MonoBehaviour
         transform.rotation = Rotation;
         direction = Rotation * direction;
 
-        this.transform.position += direction * Velocity * Time.deltaTime;
+        this.transform.position += direction * Velocity * Delta_t;
+        //this.transform.position += direction * Velocity * Time.deltaTime;
     }
 
     // Applies some friction to velocity
@@ -147,13 +151,15 @@ public class CarMovement : MonoBehaviour
         {
             if (Velocity > 0)
             {
-                Velocity -= VEL_FRICT * Time.deltaTime;
+                //Velocity -= VEL_FRICT * Time.deltaTime;
+                Velocity -= VEL_FRICT * Delta_t;
                 if (Velocity < 0)
                     Velocity = 0;
             }
             else if (Velocity < 0)
             {
-                Velocity += VEL_FRICT * Time.deltaTime;
+                //Velocity += VEL_FRICT * Time.deltaTime;
+                Velocity += VEL_FRICT * Delta_t;
                 if (Velocity > 0)
                     Velocity = 0;            
             }
